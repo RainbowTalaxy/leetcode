@@ -1,6 +1,5 @@
-// 100ms
 class Solution {
-    var table = [Int]()
+    var table = [Int.max]
 
     func countSmaller(_ nums: [Int]) -> [Int] {
         var result = [Int]()
@@ -13,12 +12,12 @@ class Solution {
 
     func findAndInsert(_ val: Int) -> Int {
         var left = 0, right = table.count - 1
-        while right - left > 1 {
-            var mid = (left + right)
-            if val < table[mid] {
-                right = mid
+        while left < right {
+            var mid = (left + right) / 2
+            if val > table[mid] {
+                left = mid + 1
             } else {
-                left = mid
+                right = mid
             }
         }
         table.insert(val, at: right)

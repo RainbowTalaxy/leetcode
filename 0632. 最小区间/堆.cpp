@@ -1,8 +1,4 @@
-#include<iostream>
-#include<vector>
-#include<queue>
-using namespace std;
-
+// 力扣题解
 class Solution {
 public:
     vector<int> smallestRange(vector<vector<int>>& nums) {

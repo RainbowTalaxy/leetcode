@@ -2,62 +2,83 @@
 #include<vector>
 using namespace std;
 
-vector<int>  kmp_table(string word) {
-    // pos: current position in 'table'
-    // cnd: next position of current substring in 'word'
-    int pos = 1, cnd = 0, word_len = word.size();
-    vector<int> table(word_len, -1);
-    
-    while (pos < word_len) {
-        if (word[pos] == word[cnd]) {
-            table[pos] = table[cnd];
-        } else {
-            table[pos] = cnd;
-            cnd = table[cnd];
-            while (cnd >= 0 && word[pos] != word[cnd]) {
-                cnd = table[cnd];
-            }
+vector<int> getNext(string pattern) {
+    int len = pattern.size(), prefix_end = 0;
+    vector<int> next(len, 0);
+
+    for (int i = 1; i < len; i += 1) {
+        while (prefix_end > 0 && pattern[prefix_end] != pattern[i]) {
+            prefix_end = next[prefix_end - 1];
         }
-        pos += 1;
-        cnd += 1;
+        if (pattern[prefix_end] == pattern[i]) {
+            prefix_end += 1;
+        }
+        next[i] = prefix_end;
     }
 
-    return table;
+    return next;
 }
 
-vector<int> kmp_search(string text, string word) {
-    vector<int> positions, table = kmp_table(word);
-    int text_len = text.size(), word_len = word.size();
-    // j: current position in 'text'
-    // k: current position in 'word'
-    int j = 0, k = 0;
-    
-    while (j < text_len) {
-        if (word[k] == text[j]) {
-            j += 1;
-            k += 1;
-            if (k == word_len) {
-                // match found, if only first match is needed, return 'j - k'
-                positions.push_back(j - k);
-                k = table[k];
-            }
-        } else {
-            k = table[k];
-            if (k < 0) {
-                j += 1;
-                k += 1;
-            }
+vector<int> kmp_match(string target, string pattern) {
+    int p_len = pattern.size(), match_end = 0;
+    vector<int> next = getNext(pattern), result;
+
+    for (int i = 0; i < target.size(); i += 1) {
+        while (match_end > 0 && target[i] != pattern[match_end]) {
+            match_end = next[match_end - 1];
+        }
+        if (target[i] == pattern[match_end]) {
+            match_end += 1;
+        }
+        if (match_end == p_len) {
+            result.push_back(i - p_len + 1);
         }
     }
 
-    return positions;
+    return result;
+}
+
+int kmp(string target, string pattern) {
+    int p_len = pattern.size(), t_len = target.size();
+
+    if (p_len == 0) {
+        return 0;
+    }
+
+    int match_end = 0;
+    vector<int> next(p_len, 0), result;
+
+    for (int i = 1; i < p_len; i += 1) {
+        while (match_end > 0 && pattern[i] != pattern[match_end]) {
+            match_end = next[match_end - 1];
+        }
+        if (pattern[i] == pattern[match_end]) {
+            match_end += 1;
+        }
+        next[i] = match_end;
+    }
+
+    match_end = 0;
+
+    for (int i = 0; i < t_len; i += 1) {
+        while (match_end > 0 && target[i] != pattern[match_end]) {
+            match_end = next[match_end - 1];
+        }
+        if (target[i] == pattern[match_end]) {
+            match_end += 1;
+        }
+        if (match_end == p_len) {
+            return i - p_len + 1;
+        }
+    }
+
+    return -1;
 }
 
 int main() {
-    string text = "abcdabcdabcdefghi", word = "abcdef";
-    vector<int> result = kmp_search(text, word);
-    for (auto e: result) {
-        cout << e << endl;
-    }
+    string p = "issip", s = "mississippi";
+    // vector<int> next = getNext(p);
+    int result = kmp(s, p);
+    cout << result;
     return 0;
 }

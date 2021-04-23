@@ -1,5 +1,5 @@
-#include<iostream>
 #include<vector>
+#include<string>
 using namespace std;
 
 vector<int> getNext(string pattern) {
@@ -73,12 +73,4 @@ int kmp(string target, string pattern) {
     }
 
     return -1;
-}
-
-int main() {
-    string p = "issip", s = "mississippi";
-    // vector<int> next = getNext(p);
-    int result = kmp(s, p);
-    cout << result;
-    return 0;
 }

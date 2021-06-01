@@ -12,7 +12,6 @@ var canEat = function(candiesCount, queries) {
     queries.forEach((query, i) => {
         minNum = table[query[0]] + 1
         maxNum = table[query[0] + 1]
-        console.log(minNum, maxNum)
         if (query[1] + 1 <= maxNum && (query[1] + 1) * query[2] >= minNum) {
             result[i] = true
         }
